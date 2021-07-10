@@ -1,25 +1,23 @@
 package org.email.project.EmailApp;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 
 import org.email.project.EmailApp.reader.TextFileReader;
 
-// implement clonable later since the new object gets created everytime
 public class App {
 	
-	private static final String singleFilename = "./src/main/java/org/email/project/EmailApp/db/SingleEmail.txt";
-	private static final String bulkFilename = "./src/main/java/org/email/project/EmailApp/db/BulkEmail.txt";
-	private static final String megaFilename = "./src/main/java/org/email/project/EmailApp/db/MegaEmail.txt";
-	
-	public static void main(String... args) {
-//		EmailController eController = new EmailController();
-//		eController.sendMail("wasa.wasa.in@gmail.com");
-//		
+	private static final String path = "C:\\Users\\Syed\\git\\repositoryHitProject\\EmailApp\\src\\main\\java\\org\\email\\project\\EmailApp\\db\\";
+	private static final String filename = path + "email3.txt";
+
+	public static void main(String... args) throws Exception {
+
 		BulkEmailController bController = new BulkEmailController();
-		TextFileReader textFileReader = new TextFileReader(megaFilename);
-		Set<String> emailSet = textFileReader.read();
+		// provide HashSet or ArrayList
+		Collection<String> emailSet = new TextFileReader(filename).read(new ArrayList<String>()); 
+
 		bController.sendMail(emailSet);
-		
 		
 	}
 }

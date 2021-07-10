@@ -2,6 +2,7 @@ package org.email.project.EmailApp;
 
 import javax.mail.internet.InternetAddress;
 
+// implement clonable later since the new object gets created everytime
 // SendingEmailDetails, SendEmailDetails, EmailSendDetails
 final public class SenderEmail {
 	public static final String USERNAME = "aslamhit21009@gmail.com";

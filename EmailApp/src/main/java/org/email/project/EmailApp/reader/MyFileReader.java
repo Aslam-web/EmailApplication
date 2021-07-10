@@ -1,7 +1,7 @@
 package org.email.project.EmailApp.reader;
 
-import java.util.Set;
+import java.util.Collection;
 
-public interface MyFileReader {
-	Set<String> read();
+abstract public class MyFileReader {
+	abstract Collection<String> read(Collection<String> collection);
 }
