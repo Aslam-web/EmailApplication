@@ -21,6 +21,7 @@
 
 	<dependencies>
 
+		<!-- Junit dependancy -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -28,12 +29,14 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Java Mail dependancy -->
 		<dependency>
 			<groupId>com.sun.mail</groupId>
 			<artifactId>javax.mail</artifactId>
 			<version>1.6.2</version>
 		</dependency>
 
+		<!-- DotEnv dependencey -->
 		<dependency>
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>dotenv-java</artifactId>
