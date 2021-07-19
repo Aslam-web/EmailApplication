@@ -1,7 +1,7 @@
 package org.email.project.EmailApp.reader;
 
-import java.util.Collection;
+import java.util.Set;
 
-abstract public class MyFileReader {
-	abstract Collection<String> read(Collection<String> collection);
+abstract public class MyDataReader<T> {
+	abstract Set<String> read(T dataSource);
 }

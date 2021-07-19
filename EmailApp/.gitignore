@@ -1,1 +1,5 @@
 src/test/
+.env
+src/main/java/org/email/project/EmailApp/db/email3.txt
+src/main/java/org/email/project/EmailApp/db/email41.txt
+src/main/java/org/email/project/EmailApp/db/email10.txt

@@ -13,10 +13,12 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class EmailController {
 
 	private Session session;
-	private SenderEmail senderEmail;
+	private RecipientDetails recipientDetails;
 	
 	public boolean sendMail(InternetAddress recipient){
 		Map<String, String> m = new HashMap<>();
@@ -32,7 +34,8 @@ public class EmailController {
 		session = Session.getInstance(properties, new Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(SenderEmail.USERNAME, SenderEmail.PASSWORD);
+				return new PasswordAuthentication(Dotenv.load().get("MY_ACCOUNT_EMAIL"), 
+												  Dotenv.load().get("MY_ACCOUNT_PASSWORD"));
 			}
 		});
 		
@@ -41,13 +44,13 @@ public class EmailController {
 
 	private boolean connect(InternetAddress recipient) {
 		
-		senderEmail = new SenderEmail(recipient);
+		recipientDetails = new RecipientDetails(recipient);
 		
 		try {
 			
 			Message message = createMessage(recipient);
 			Transport.send(message);
-			System.out.println("MESSAGE SENT SUCCESSFULLY to "+senderEmail.getRecieverName()+" !!!");
+			System.out.println("MESSAGE SENT SUCCESSFULLY to "+recipientDetails.getRecieverName()+" !!!");
 			return true;
 		} catch (MessagingException e) {
 			
@@ -61,11 +64,11 @@ public class EmailController {
 		
 		Message message = new MimeMessage(session);
 		try {
-			message.setFrom(new InternetAddress(SenderEmail.USERNAME));
+			message.setFrom(new InternetAddress(Dotenv.load().get("MY_ACCOUNT_EMAIL")));
 			message.setRecipient(Message.RecipientType.TO, recipient);
-			message.setSubject("Testing main from hit21009 to wasa");
-			message.setText(senderEmail.getMessage());
-			System.out.println("MESSAGE GENERATED for "+senderEmail.getRecieverName()+" !!!");
+			message.setSubject("Sample Email from Java Application");
+			message.setText(recipientDetails.getMessage());
+			System.out.println("MESSAGE GENERATED for "+recipientDetails.getRecieverName()+" !!!");
 			return message;
 		} catch (Exception e) {
 			System.out.println("SOME ERROR OCCURED !!!");
