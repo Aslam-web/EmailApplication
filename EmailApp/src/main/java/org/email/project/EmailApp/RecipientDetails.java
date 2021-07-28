@@ -17,7 +17,7 @@ public class RecipientDetails {
 				+ "\nMr M.N Aslam,"
 				+ "\nJAVA developer Trainer,"
 				+ "\nHaaris Infotech Institutions,"
-				+ "\nEmail" + ":aslam1qqqq@gmail.com,"
+				+ "\nEmail : aslam1qqqq@gmail.com,"
 				+ "\nPhone: +91 63799 71782.";
 	}
 

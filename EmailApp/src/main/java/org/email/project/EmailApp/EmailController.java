@@ -30,6 +30,7 @@ public class EmailController {
 
 		Properties properties=new Properties();
 		properties.putAll(m);
+		
 //		Session session = Session.getInstance((Properties) properties, new Authenticator() {
 		session = Session.getInstance(properties, new Authenticator() {
 			@Override
