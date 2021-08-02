@@ -1,7 +1,5 @@
 package org.email.project.EmailApp;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
@@ -13,37 +11,37 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import io.github.cdimascio.dotenv.Dotenv;
-
 public class EmailController {
 
 	private Session session;
 	private RecipientDetails recipientDetails;
+	private String fromEmail;
+	private String password;
 	
-	public boolean sendMail(InternetAddress recipient){
-		Map<String, String> m = new HashMap<>();
+	public EmailController(String fromEmail, String password) {
+		this.fromEmail = fromEmail;
+		this.password = password;
+	}
 
-		m.put("mail.smtp.auth", "true");
-		m.put("mail.smtp.starttls.enable", "true");
-		m.put("mail.smtp.host", "smtp.gmail.com");
-		m.put("mail.smtp.port", "587");
+	public boolean sendMail(String recipient){
+		Properties props = new Properties();
 
-		Properties properties=new Properties();
-		properties.putAll(m);
-		
-//		Session session = Session.getInstance((Properties) properties, new Authenticator() {
-		session = Session.getInstance(properties, new Authenticator() {
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+
+		session = Session.getInstance(props, new Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(Dotenv.load().get("MY_ACCOUNT_EMAIL"), 
-												  Dotenv.load().get("MY_ACCOUNT_PASSWORD"));
+				return new PasswordAuthentication(fromEmail,password);
 			}
 		});
 		
 		return connect(recipient);
 	}
 
-	private boolean connect(InternetAddress recipient) {
+	private boolean connect(String recipient) {
 		
 		recipientDetails = new RecipientDetails(recipient);
 		
@@ -61,13 +59,13 @@ public class EmailController {
 		} 
 	}
 
-	private Message createMessage(InternetAddress recipient) {
+	private Message createMessage(String recipient) {
 		
 		Message message = new MimeMessage(session);
 		try {
-			message.setFrom(new InternetAddress(Dotenv.load().get("MY_ACCOUNT_EMAIL")));
-			message.setRecipient(Message.RecipientType.TO, recipient);
-			message.setSubject("Sample Email from Java Application");
+			message.setFrom(new InternetAddress());
+			message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+			message.setSubject("Generated email through properties file");
 			message.setText(recipientDetails.getMessage());
 			System.out.println("MESSAGE GENERATED for "+recipientDetails.getRecieverName()+" !!!");
 			return message;

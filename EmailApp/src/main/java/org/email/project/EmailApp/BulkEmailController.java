@@ -23,6 +23,7 @@ public class BulkEmailController {
 	private RecipientDetails recipientDetails;
 	private List<InternetAddress> rAddresses;
 
+	private int threadCount=1;
 	private int count;
 	private int failedMessages;
 	private String status = "SUCCESS";
@@ -36,6 +37,9 @@ public class BulkEmailController {
 		this.myPassword = myPassword;
 		this.rAddresses = new ArrayList<>();
 	}
+	
+	//can explicitly set the thread count (default = 1)
+	public void setThreadCount(int threadCount) {this.threadCount=threadCount;}
 
 	// setRecipients()
 	public boolean sendBulkMail(Set<String> recipients) {
@@ -59,17 +63,29 @@ public class BulkEmailController {
 		covertToAddress(recipients);
 		
 		// starts the process using the given amount of threads
-		startThreadOperation(4);
+		startThreadOperation();
 
 		return true;
 	}
 
-	private void startThreadOperation(int threadCount) {
-
-		System.out.println("Preparing the messages ...\nTotal no.of reciepients: "+rAddresses.size());
-		System.out.println("\n----------------------------------------------");
+	private void startThreadOperation() {
+		
+		// initializing thread count and details displayed
+		System.out.println("Total no.of reciepients: "+rAddresses.size());
+		if (threadCount > rAddresses.size()/2) {
+			threadCount = (rAddresses.size()/2);
+			System.out.printf("NOTE : Excessive amount of threads used. Reduced to : %s threads\n", threadCount);
+		} 
+		if (threadCount <= 0) {
+			threadCount = 1;
+			System.out.println("NOTE : Invalid thread count. Set to : 1 thread");
+		} 
+		System.out.println("Preparing the messages ...\n----------------------------------------------");
+		this.status = "NOT OK";
+		
+		// process starts
 		long startTime = System.currentTimeMillis();
-
+		
 		Thread[] threads = new Thread[threadCount];
 
 		for (int i = 0; i < threads.length; i++) {
@@ -80,7 +96,10 @@ public class BulkEmailController {
 		for (Thread thread : threads) {
 		    try {thread.join();} catch (InterruptedException e) {e.printStackTrace();}
 		}
-
+		
+		// process ends and details displayed
+		if (failedMessages == rAddresses.size()) this.status = "ERROR";
+		
 		System.out.println("----------------------------------------------\n");
 		System.out.printf("Total recipients: %s\nSent : %s,\tFailed : %s,\tStatus : %s\nTime taken : %ds\nNo.Of Threads used : %d", 
 				rAddresses.size(), count-failedMessages, failedMessages, status,
@@ -100,10 +119,10 @@ public class BulkEmailController {
 
 	// connect() is responsible for creating [i.e via createMessage()] and sending
 	// message
-	private boolean send(InternetAddress recipient) {
+	private void send(InternetAddress recipient) {
 
 		// convenience class
-		recipientDetails = new RecipientDetails(recipient);
+		recipientDetails = new RecipientDetails(recipient.toString());
 
 		try {
 
@@ -111,14 +130,11 @@ public class BulkEmailController {
 			Transport.send(message);
 			System.out.printf("Message successfully sent to <%s>\n",recipient);
 		} catch (MessagingException e) {
-			System.out.printf("Failed to send message to : <%s>",recipient);
+			System.out.printf("Failed to send message to : <%s>\n",recipient);
 			System.out.println("\tProblem : " + e.getMessage());
 			failedMessages++;
 			this.status = "OK";
-			return false;
 		}
-
-		return true;
 	}
 
 	// creates the message body
@@ -128,7 +144,7 @@ public class BulkEmailController {
 		try {
 			message.setFrom(myGmail);
 			message.setRecipient(Message.RecipientType.TO, recipient);
-			message.setSubject("Using Multi Threading to send Bulk Mail");
+			message.setSubject("Made use of the util package's property file handling");
 			message.setText(recipientDetails.getMessage());
 			return message;
 		} catch (Exception e) {
